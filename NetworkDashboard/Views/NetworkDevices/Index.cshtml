@@ -1,0 +1,73 @@
+﻿@model IEnumerable<NetworkDashboard.Models.NetworkDevice>
+
+@{
+    ViewData["Title"] = "Network Devices";
+}
+
+<h1>Network Devices</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.DisplayName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DeviceName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DeviceType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DeviceDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IPAddress)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsConnected)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.DisplayName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DeviceName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DeviceType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DeviceDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IPAddress)
+            </td>
+            <td>
+                @if(item.IsConnected)
+                {
+                    <dtext style="color:green">Connected</dtext>   
+                }
+                else
+                {
+                    <dtext style="color:darkred">Not Connected</dtext> 
+                }
+                @*@Html.DisplayFor(modelItem => item.IsConnected)*@
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

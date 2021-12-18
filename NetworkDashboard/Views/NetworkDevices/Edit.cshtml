@@ -1,0 +1,60 @@
+﻿@model NetworkDashboard.Models.NetworkDevice
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>NetworkDevice</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="DisplayName" class="control-label"></label>
+                <input asp-for="DisplayName" class="form-control" />
+                <span asp-validation-for="DisplayName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DeviceName" class="control-label"></label>
+                <input asp-for="DeviceName" class="form-control" />
+                <span asp-validation-for="DeviceName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DeviceType" class="control-label"></label>
+                @Html.DropDownList("DeviceType", new SelectList(ViewBag.data, "TypeTitle", "TypeTitle"))
+                @*<input asp-for="DeviceType" class="form-control" />*@
+                <span asp-validation-for="DeviceType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DeviceDescription" class="control-label"></label>
+                <input asp-for="DeviceDescription" class="form-control" />
+                <span asp-validation-for="DeviceDescription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IPAddress" class="control-label"></label>
+                <input asp-for="IPAddress" class="form-control" />
+                <span asp-validation-for="IPAddress" class="text-danger"></span>
+            </div>
+            @*<div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsConnected" /> @Html.DisplayNameFor(model => model.IsConnected)
+                </label>
+            </div>*@
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

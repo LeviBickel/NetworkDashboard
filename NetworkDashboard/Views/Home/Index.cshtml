@@ -1,0 +1,79 @@
+﻿@model NetworkDashboard.Models.DashboardDisplay
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<h1>Network Overview</h1>
+
+
+<div class="btn-group dropend" style="margin-bottom:15px">
+  <button type="button" class="btn btn-warning dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+    Actions
+  </button> <br/>
+  <ul class="dropdown-menu">
+    <!-- Dropdown menu links -->
+    <li><a asp-controller="Home" asp-action="Refresh">Refresh</a></li>
+    <li><a asp-controller="MonitorTypes" asp-action="Create">Add Monitor Type</a></li>
+    <li><a asp-controller="NetworkDevices" asp-action="Create">Add Host</a></li>
+  </ul>
+</div>
+<br />
+@if(Model != null && Model.TypesOfDevices.Count >= 1)
+{
+    @foreach(var deviceType in Model.TypesOfDevices)
+    {
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+            <h3 class="panel-title">@deviceType.TypeTitle</h3>
+            </div>
+            <div class="panel-body">
+                @foreach(var device in Model.Devices)
+                {
+                    @if(device.DeviceType.ToLower() == @deviceType.TypeTitle.ToLower())
+                    {
+                        <p><a asp-controller="NetworkDevices" asp-action="Details" asp-route-id=@device.Id>@device.DisplayName.ToString()</a> - <!--Add in a link to see the details of the device--> 
+                        @if(device.IsConnected)
+                        {
+                            <dtext style="color:green">Connected</dtext>   
+                        }
+                        else
+                        {
+                            <dtext style="color:darkred">Not Connected</dtext> 
+                        }
+                        </p>
+                    }
+                }
+            </div>
+        </div>
+    }
+}
+else if (ViewBag.ErrorMessage != null)
+{
+    <div class="panel panel-primary">
+            <div class="panel-heading">
+            <h3 class="panel-title" style="color:red">Error</h3>
+            </div>
+            <div class="panel-body">
+            <h3 style="color:red">Error</h3>
+            @ViewBag.ErrorMessage; 
+    </div>
+        </div>
+}
+else
+{
+    <div class="panel panel-primary">
+            <div class="panel-heading">
+            <h3 class="panel-title">Getting Started</h3>
+            </div>
+            <div class="panel-body">
+            <h3>Welcome</h3>
+            Thank you for choosing the NetworkDashboard. Start by using the action links above to add a Device Monitor Type. Then you can add your first device using the action links.         
+    </div>
+        </div>
+}
+
+
+
+
+

@@ -1,0 +1,54 @@
+﻿@model IEnumerable<NetworkDashboard.Models.MonitorTypes>
+
+@{
+    ViewData["Title"] = "Monitor Types";
+}
+
+<h1>Monitor Types</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.TypeTitle)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TypeDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ping)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.TypeTitle)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TypeDescription)
+            </td>
+            <td>
+            @if(item.ping == true)
+            {
+                <dtext style="color:green">ping</dtext>   
+            }
+            else
+            {
+                <dtext style="color:darkred">HTML Check</dtext> 
+            }
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
