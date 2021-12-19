@@ -1,19 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using NDDevicePoller.Data;
-using NetworkDashboard.Models;
+using NDDevicePoller.Models;
 
-namespace NetworkDashboard.Data
+namespace NDDevicePoller.Data
 {
-    public class DBContext : DbContext
+    public class PollerDBContext : DbContext
     {
-        public DBContext(DbContextOptions<DBContext> options) : base(options)
+        public PollerDBContext(DbContextOptions<PollerDBContext> options) : base(options)
         {
 
         }
 
         public DbSet<MonitorTypes> MonitorTypes { get; set; }
         public DbSet<NetworkDevice> NetworkDevices { get; set; }
-
         public DbSet<CrossServiceSettings> CrossPlatformSettings { get; set; }
     }
+
+    
 }
