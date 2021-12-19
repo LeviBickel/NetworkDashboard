@@ -4,9 +4,6 @@ using NDDevicePoller.Models;
 
 namespace NDDevicePoller
 {
-    /// <summary>
-    /// Update this script to log all information to a log file as well as to the console. 
-    /// </summary>
 
     public class Worker : BackgroundService
     {
@@ -84,8 +81,6 @@ namespace NDDevicePoller
 
         private async Task PingHost(NetworkDevice hostInfo)
         {
-            //Remake this. It should be updating the database. 
-
             bool isPingable = false;
             Ping pinger = null;
 
