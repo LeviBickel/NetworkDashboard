@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using NDDevicePoller.Data;
+using NDDevicePoller.Models;
 using NetworkDashboard.Data;
 using NetworkDashboard.Models;
 using System.Diagnostics;
@@ -18,32 +21,11 @@ namespace NetworkDashboard.Controllers
 
         public IActionResult Index()
         {
-            Utils utils = new Utils();
+            
             try
             {
                 var networkDevices = _dBContext.NetworkDevices.ToList();
                 var monitorTypes = _dBContext.MonitorTypes.ToList();
-
-                foreach (var networkDevice in networkDevices)
-                {
-                    if (monitorTypes.Where(m => m.ping == false).Where(m => m.TypeTitle == networkDevice.DeviceType).Count() >= 1)//nonPing.Contains(monitorTypes.Find(m=>m.TypeTitle == networkDevice.DeviceType)))
-                    {
-                        networkDevice.IsConnected = utils.HTTPCheckHostAsync(networkDevice).Result;
-                    }
-                    else
-                    {
-                        if (!utils.PingHost(networkDevice.IPAddress))
-                        {
-                            networkDevice.IsConnected = utils.PingHost(networkDevice.DeviceName);
-                        }
-                        else
-                        {
-                            networkDevice.IsConnected = true;
-                        }
-                    }
-
-                }
-                _dBContext.SaveChanges();
 
                 DashboardDisplay dash = new DashboardDisplay()
                 {
@@ -60,23 +42,71 @@ namespace NetworkDashboard.Controllers
             }
         }
 
-        public IActionResult Refresh()
+
+        public IActionResult Settings()
         {
-            Utils utils = new Utils();
-            var networkDevices = _dBContext.NetworkDevices.ToList();
-            foreach (var item in networkDevices)
-            {
-                if(utils.PingHost(item.IPAddress) == false)
+            if (_dBContext.CrossPlatformSettings.Any()) { 
+                NDDevicePoller.Data.CrossServiceSettings settings = new NDDevicePoller.Data.CrossServiceSettings
                 {
-                    item.IsConnected = utils.PingHost(item.DeviceName);
-                }
-                else
-                {
-                    item.IsConnected = true;
-                }
-                _dBContext.SaveChanges();
+                    ID = _dBContext.CrossPlatformSettings.First().ID,
+                    PollInterval = _dBContext.CrossPlatformSettings.First().PollInterval / 1000
+                };
+                return View(settings);
             }
-            return RedirectToAction("Index");
+            else
+            {
+                //Database could be empty:
+                NDDevicePoller.Data.CrossServiceSettings settings = new NDDevicePoller.Data.CrossServiceSettings
+                {
+                    PollInterval = 60000
+                };
+                _dBContext.CrossPlatformSettings.Add(settings);
+                _dBContext.SaveChanges();
+                NDDevicePoller.Data.CrossServiceSettings newSettings = new NDDevicePoller.Data.CrossServiceSettings
+                {
+                    ID= _dBContext.CrossPlatformSettings.First().ID,
+                    PollInterval = _dBContext.CrossPlatformSettings.First().PollInterval / 1000
+                };
+                return View(newSettings);
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Settings(int id, [Bind("ID,PollInterval")] NDDevicePoller.Data.CrossServiceSettings settings)
+        {
+            if (id != settings.ID)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    settings.PollInterval = settings.PollInterval * 1000;
+                    _dBContext.Update(settings);
+                    await _dBContext.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!SettingsExists(settings.ID))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(settings);
+        }
+
+        private bool SettingsExists(int id)
+        {
+            return _dBContext.CrossPlatformSettings.Any(e => e.ID == id);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

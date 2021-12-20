@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetworkDashboard", "NetworkDashboard\NetworkDashboard.csproj", "{EE77D435-5C94-4B29-852F-9978035C4D50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetworkDashboard", "NetworkDashboard\NetworkDashboard.csproj", "{EE77D435-5C94-4B29-852F-9978035C4D50}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NDDevicePoller", "NDDevicePoller\NDDevicePoller.csproj", "{C81BD6F2-714F-4E0F-8482-E8C6A6C319F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{EE77D435-5C94-4B29-852F-9978035C4D50}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE77D435-5C94-4B29-852F-9978035C4D50}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE77D435-5C94-4B29-852F-9978035C4D50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C81BD6F2-714F-4E0F-8482-E8C6A6C319F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C81BD6F2-714F-4E0F-8482-E8C6A6C319F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C81BD6F2-714F-4E0F-8482-E8C6A6C319F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C81BD6F2-714F-4E0F-8482-E8C6A6C319F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

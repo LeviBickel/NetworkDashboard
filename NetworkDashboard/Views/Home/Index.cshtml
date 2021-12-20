@@ -13,12 +13,13 @@
   </button> <br/>
   <ul class="dropdown-menu">
     <!-- Dropdown menu links -->
-    <li><a asp-controller="Home" asp-action="Refresh">Refresh</a></li>
+    <li><a asp-controller="Home" asp-action="Settings">Settings</a></li>
     <li><a asp-controller="MonitorTypes" asp-action="Create">Add Monitor Type</a></li>
     <li><a asp-controller="NetworkDevices" asp-action="Create">Add Host</a></li>
   </ul>
 </div>
 <br />
+
 @if(Model != null && Model.TypesOfDevices.Count >= 1)
 {
     @foreach(var deviceType in Model.TypesOfDevices)
