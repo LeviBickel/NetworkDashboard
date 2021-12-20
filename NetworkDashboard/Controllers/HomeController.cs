@@ -21,7 +21,7 @@ namespace NetworkDashboard.Controllers
 
         public IActionResult Index()
         {
-            //Utils utils = new Utils();
+            
             try
             {
                 var networkDevices = _dBContext.NetworkDevices.ToList();

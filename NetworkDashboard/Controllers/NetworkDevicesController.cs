@@ -59,26 +59,26 @@ namespace NetworkDashboard.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,DisplayName,DeviceName,DeviceType,DeviceDescription,IPAddress,IsConnected")] NetworkDevice networkDevice)
         {
-            Utils utils = new Utils();
+            //Utils utils = new Utils();
             if (ModelState.IsValid)
             {
-                var nonPingCategories = _context.MonitorTypes.Where(m => m.ping == false).Where(m=> m.TypeTitle == networkDevice.DeviceType).ToList();
+                //var nonPingCategories = _context.MonitorTypes.Where(m => m.ping == false).Where(m=> m.TypeTitle == networkDevice.DeviceType).ToList();
 
-                if (nonPingCategories != null && nonPingCategories.Count >= 1)
-                {
-                    networkDevice.IsConnected = utils.HTTPCheckHostAsync(networkDevice).Result;
-                }
-                else
-                {
-                    if (!utils.PingHost(networkDevice.IPAddress))
-                    {
-                        networkDevice.IsConnected = utils.PingHost(networkDevice.DeviceName);
-                    }
-                    else
-                    {
-                        networkDevice.IsConnected = true;
-                    }
-                }
+                //if (nonPingCategories != null && nonPingCategories.Count >= 1)
+                //{
+                //    networkDevice.IsConnected = utils.HTTPCheckHostAsync(networkDevice).Result;
+                //}
+                //else
+                //{
+                //    if (!utils.PingHost(networkDevice.IPAddress))
+                //    {
+                //        networkDevice.IsConnected = utils.PingHost(networkDevice.DeviceName);
+                //    }
+                //    else
+                //    {
+                //        networkDevice.IsConnected = true;
+                //    }
+                //}
                 _context.Add(networkDevice);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
