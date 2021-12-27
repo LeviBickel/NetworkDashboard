@@ -100,6 +100,7 @@ namespace NDDevicePoller
             }
             catch (PingException ex)
             {
+                _logger.LogError(ex.Message);
                 isPingable = false;
             }
             finally
