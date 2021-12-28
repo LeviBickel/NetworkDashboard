@@ -1,4 +1,9 @@
+using System.Collections.Generic;
+using System.Net;
 using System.Net.NetworkInformation;
+using Lextm.SharpSnmpLib;
+using Lextm.SharpSnmpLib.Messaging;
+using Lextm.SharpSnmpLib.Security;
 using NDDevicePoller.Data;
 using NDDevicePoller.Models;
 
@@ -51,6 +56,7 @@ namespace NDDevicePoller
             {
                 Tasks.Add(HttpCheck(device));
             }
+            //SNMP Check here
             await Task.WhenAll(Tasks);
         }
 
@@ -66,6 +72,7 @@ namespace NDDevicePoller
             {
                 if (monitorTypes.Where(m => m.ping == false).Where(m => m.TypeTitle == networkDevice.DeviceType).Count() >= 1)
                 {
+                    //Add the SNMP List here
                     HttpDevices.Add(networkDevice);
                 }
                 else if (monitorTypes.Where(m=>m.ping == true).Where(m=>m.TypeTitle == networkDevice.DeviceType).Count() >= 1)
@@ -143,5 +150,36 @@ namespace NDDevicePoller
             await _dbHelper.UpdateConnectionStatus(hostInfo);
             _logger.LogInformation($"Device: {hostInfo.DisplayName} Connection Status: {hostInfo.IsConnected}");
         }
+
+        private async Task SNMPListener(NetworkDevice hostInfo)
+        {
+            //Discovery Phase of SNMPv3
+            
+            Discovery discovery = Messenger.GetNextDiscovery(SnmpType.GetRequestPdu);
+            ReportMessage report = discovery.GetResponse(60000, new IPEndPoint(IPAddress.Parse(hostInfo.IPAddress), 161));
+
+            //Authentication
+            var userName = new OctetString("username");
+            //var auth = new SHA1AuthenticationProvider(new OctetString("myauthenticationpassword"));//****OBSOLETE*****
+            var auth = new SHA256AuthenticationProvider(new OctetString("AuthPassword"));
+            //var priv = new DESPrivacyProvider(new OctetString("myprivacypassword"), auth); //****OBSOLETE*****
+            var aesPriv = new AESPrivacyProvider(new OctetString("password"), auth);
+            
+            
+            
+            //Get SNMP
+            
+            GetRequestMessage request = new GetRequestMessage(VersionCode.V3, Messenger.NextMessageId, Messenger.NextRequestId, userName, new List<Variable> { new Variable(new ObjectIdentifier("1.3.6.1.2.1.1.1.0")) }, aesPriv, Messenger.MaxMessageSize, report);
+            ISnmpMessage reply = request.GetResponse(60000, new IPEndPoint(IPAddress.Parse(hostInfo.IPAddress), 161));
+            if (reply.Pdu().ErrorStatus.ToInt32() != 0) // != ErrorCode.NoError
+            {
+                //throw ErrorException.Create(
+                //    "error in response",
+                //    IPAddress.Parse(hostInfo.IPAddress),
+                //    reply);
+                _logger.LogError($"Error in response {IPAddress.Parse(hostInfo.IPAddress)}, {reply}");  //log the error
+            }
+        }
+       
     }
 }
