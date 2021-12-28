@@ -159,11 +159,10 @@ namespace NDDevicePoller
             ReportMessage report = discovery.GetResponse(60000, new IPEndPoint(IPAddress.Parse(hostInfo.IPAddress), 161));
 
             //Authentication
-            var userName = new OctetString("username");
-            //var auth = new SHA1AuthenticationProvider(new OctetString("myauthenticationpassword"));//****OBSOLETE*****
-            var auth = new SHA256AuthenticationProvider(new OctetString("AuthPassword"));
-            //var priv = new DESPrivacyProvider(new OctetString("myprivacypassword"), auth); //****OBSOLETE*****
-            var aesPriv = new AESPrivacyProvider(new OctetString("password"), auth);
+            var credentials = _dbHelper.GetSNMPv3Credentials();
+            var userName = new OctetString(credentials.UserName);
+            var auth = new SHA256AuthenticationProvider(new OctetString(credentials.AuthPassword));
+            var aesPriv = new AESPrivacyProvider(new OctetString(credentials.PrivPassword), auth);
             
             
             
@@ -171,14 +170,17 @@ namespace NDDevicePoller
             
             GetRequestMessage request = new GetRequestMessage(VersionCode.V3, Messenger.NextMessageId, Messenger.NextRequestId, userName, new List<Variable> { new Variable(new ObjectIdentifier("1.3.6.1.2.1.1.1.0")) }, aesPriv, Messenger.MaxMessageSize, report);
             ISnmpMessage reply = request.GetResponse(60000, new IPEndPoint(IPAddress.Parse(hostInfo.IPAddress), 161));
-            if (reply.Pdu().ErrorStatus.ToInt32() != 0) // != ErrorCode.NoError
+            if (reply.Pdu().ErrorStatus.ToInt32() != 0)
             {
-                //throw ErrorException.Create(
-                //    "error in response",
-                //    IPAddress.Parse(hostInfo.IPAddress),
-                //    reply);
                 _logger.LogError($"Error in response {IPAddress.Parse(hostInfo.IPAddress)}, {reply}");  //log the error
+                hostInfo.IsConnected = false;
             }
+            else
+            {
+                _logger.LogInformation($"{hostInfo.DisplayName} polled with SNMPv3. Response: {reply}");
+                hostInfo.IsConnected = true;
+            }
+            await _dbHelper.UpdateConnectionStatus(hostInfo);
         }
        
     }

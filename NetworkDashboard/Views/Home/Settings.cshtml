@@ -18,6 +18,23 @@
                 <span asp-validation-for="PollInterval" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="SNMPUsername" class="control-label"></label>
+                <input asp-for="SNMPUsername" class="form-control" />
+                <span asp-validation-for="SNMPUsername" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SNMPAuth" class="control-label"></label>
+                @*@Html.PasswordFor(m=>m.SNMPAuth)*@
+                <input asp-for="SNMPAuth" class="form-control" type="password" value=@Model.SNMPAuth />
+                <span asp-validation-for="SNMPAuth" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SNMPPriv" class="control-label"></label>
+                @*@Html.PasswordFor(m=>m.SNMPPriv)*@
+                <input asp-for="SNMPPriv" class="form-control" type="password" value=@Model.SNMPPriv />
+                <span asp-validation-for="SNMPPriv" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>

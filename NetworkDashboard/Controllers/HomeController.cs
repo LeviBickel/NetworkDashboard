@@ -45,11 +45,21 @@ namespace NetworkDashboard.Controllers
 
         public IActionResult Settings()
         {
-            if (_dBContext.CrossPlatformSettings.Any()) { 
-                NDDevicePoller.Data.CrossServiceSettings settings = new NDDevicePoller.Data.CrossServiceSettings
+            if (_dBContext.CrossPlatformSettings.Any()) {
+
+                var settings = _dBContext.CrossPlatformSettings.First();
+                Utils util = new Utils();
+                settings.SNMPAuth = util.DecryptSALTandHASHPassword(settings.SNMPAuth);
+                settings.SNMPPriv = util.DecryptSALTandHASHPassword(settings.SNMPPriv);
+
+                CrossServiceSettings newSettings = new CrossServiceSettings
                 {
-                    ID = _dBContext.CrossPlatformSettings.First().ID,
-                    PollInterval = _dBContext.CrossPlatformSettings.First().PollInterval / 1000
+                    //return the password stored in the database?
+                    ID = settings.ID,
+                    PollInterval = settings.PollInterval / 1000,
+                    SNMPUsername = settings.SNMPUsername,
+                    SNMPAuth = settings.SNMPAuth,
+                    SNMPPriv = settings.SNMPPriv
                 };
                 return View(settings);
             }
@@ -65,7 +75,10 @@ namespace NetworkDashboard.Controllers
                 NDDevicePoller.Data.CrossServiceSettings newSettings = new NDDevicePoller.Data.CrossServiceSettings
                 {
                     ID= _dBContext.CrossPlatformSettings.First().ID,
-                    PollInterval = _dBContext.CrossPlatformSettings.First().PollInterval / 1000
+                    PollInterval = _dBContext.CrossPlatformSettings.First().PollInterval / 1000,
+                    SNMPUsername = "",
+                    SNMPAuth = "",
+                    SNMPPriv = ""
                 };
                 return View(newSettings);
             }
@@ -73,7 +86,7 @@ namespace NetworkDashboard.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Settings(int id, [Bind("ID,PollInterval")] NDDevicePoller.Data.CrossServiceSettings settings)
+        public async Task<IActionResult> Settings(int id, [Bind("ID,PollInterval,SNMPUsername,SNMPAuth,SNMPPriv")] NDDevicePoller.Data.CrossServiceSettings settings)
         {
             if (id != settings.ID)
             {
@@ -85,6 +98,16 @@ namespace NetworkDashboard.Controllers
                 try
                 {
                     settings.PollInterval = settings.PollInterval * 1000;
+
+
+                    //***** SALT and HASH Passwords before saving.
+                    Utils util = new Utils();
+                    string saltedAuthPassword = util.SALTandHASHPassword(settings.SNMPAuth);
+                    string saltedPrivPassword = util.SALTandHASHPassword(settings.SNMPPriv);
+
+                    settings.SNMPAuth = saltedAuthPassword;
+                    settings.SNMPPriv = saltedPrivPassword;
+
                     _dBContext.Update(settings);
                     await _dBContext.SaveChangesAsync();
                 }

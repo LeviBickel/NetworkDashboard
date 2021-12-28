@@ -6,53 +6,13 @@ namespace NetworkDashboard.Data
     public class Utils
     {
 
-        public bool PingHost(string hostInfo)
+        public string SALTandHASHPassword(string password)
         {
-            bool isPingable = false;
-            Ping pinger = null;
-
-            try
-            {
-                pinger = new Ping();
-                PingReply reply = pinger.Send(hostInfo);
-                isPingable = reply.Status == IPStatus.Success;
-            }
-            catch (PingException ex)
-            {
-                return false;
-            }
-            finally
-            {
-                if (pinger != null)
-                {
-                    pinger.Dispose();
-                }
-            }
-
-
-            return isPingable;
+            return password;
         }
-        public async Task<bool> HTTPCheckHostAsync(NetworkDevice host)
+        public string DecryptSALTandHASHPassword(string password)
         {
-            HttpClient client = new HttpClient();
-            var checkingResponse = await client.GetAsync(host.DeviceName);
-            if (!checkingResponse.IsSuccessStatusCode)
-            {
-                checkingResponse = await client.GetAsync(host.IPAddress);
-                if (!checkingResponse.IsSuccessStatusCode)
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-
-            }
-            else
-            {
-                return true;
-            }
+            return password;
         }
 
     }

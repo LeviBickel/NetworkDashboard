@@ -87,5 +87,32 @@ namespace NDDevicePoller.Data
             }
                 
         }
+        public SNMPSettings GetSNMPv3Credentials()
+        {
+            using (_dbContext = new PollerDBContext(GetAllOptions()))
+            {
+                var settings = _dbContext.CrossPlatformSettings.First();
+                if (settings != null)
+                {
+                    SNMPSettings snmpSettings = new SNMPSettings()
+                    {
+                        UserName = settings.SNMPUsername,
+                        AuthPassword = settings.SNMPAuth,
+                        PrivPassword = settings.SNMPPriv
+                    };
+                    return snmpSettings;
+                }
+                else
+                {
+                    SNMPSettings snmpSettings = new SNMPSettings()
+                    {
+                        UserName = "",
+                        AuthPassword = "",
+                        PrivPassword = ""
+                    };
+                    return snmpSettings;
+                }
+            }
+        }
     }
 }
