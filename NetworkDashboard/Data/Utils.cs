@@ -6,11 +6,11 @@ namespace NetworkDashboard.Data
     public class Utils
     {
 
-        public string SALTandHASHPassword(string password)
+        public string HASHPassword(string password)
         {
             return password;
         }
-        public string DecryptSALTandHASHPassword(string password)
+        public string DecryptHASHPassword(string password)
         {
             return password;
         }
