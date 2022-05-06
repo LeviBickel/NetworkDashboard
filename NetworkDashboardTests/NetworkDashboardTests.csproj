@@ -14,4 +14,9 @@
     <PackageReference Include="coverlet.collector" Version="3.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\NDDevicePoller\NDDevicePoller.csproj" />
+    <ProjectReference Include="..\NetworkDashboard\NetworkDashboard.csproj" />
+  </ItemGroup>
+
 </Project>

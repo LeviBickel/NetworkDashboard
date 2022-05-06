@@ -89,7 +89,7 @@ namespace NDDevicePoller
             }
         }
 
-        private async Task PingHost(NetworkDevice hostInfo)
+        public async Task PingHost(NetworkDevice hostInfo)
         {
             bool isPingable = false;
             Ping pinger = null;
