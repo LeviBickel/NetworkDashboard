@@ -17,7 +17,7 @@ namespace NDDevicePoller
 
         List<NetworkDevice> PingDevices = new List<NetworkDevice>();
         List<NetworkDevice> HttpDevices = new List<NetworkDevice>();
-
+        List<NetworkDevice> SNMPDevices = new List<NetworkDevice>();
         public Worker(ILogger<Worker> logger)
         {
             _logger = logger;
@@ -64,6 +64,7 @@ namespace NDDevicePoller
         {
             PingDevices.Clear();
             HttpDevices.Clear();
+            SNMPDevices.Clear();
 
             var networkDevices = _dbHelper.GetAllDevices();
             var monitorTypes = _dbHelper.GetAllMonitorTypes();
@@ -73,6 +74,8 @@ namespace NDDevicePoller
                 if (monitorTypes.Where(m => m.ping == false).Where(m => m.TypeTitle == networkDevice.DeviceType).Count() >= 1)
                 {
                     //Add the SNMP List here
+                    SNMPDevices.Add(networkDevice);
+
                     HttpDevices.Add(networkDevice);
                 }
                 else if (monitorTypes.Where(m=>m.ping == true).Where(m=>m.TypeTitle == networkDevice.DeviceType).Count() >= 1)
